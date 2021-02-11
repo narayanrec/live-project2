@@ -1,29 +1,70 @@
-import React from "react";
-import {render} from "react-dom";
-import Alert from 'react-bootstrap/Alert'
+import React, {Fragment} from "react";
+import Alert from 'react-bootstrap/Alert';
+import {appNotification} from './app-notification';
 
 class AppNotificationComponent extends React.Component {
 
 
     constructor(props) {
         super(props);
-        this.type = 'success';
+        this.state =  {
+            show: false,
+            title: '',
+            variant: '',
+            message: ''
+        };
     }
 
+    componentDidMount() {
+        this.subscription = appNotification.onChange().subscribe(res => {
+            this.setState({
+                show: true,
+                title: res.title,
+                variant: res.variant,
+                message: res.message
+            });
+            this.resetAfterTenSeconds();
+        })
+    }
+
+     componentWillUnmount() {
+            this.subscription.unsubscribe();
+     }
+
+     reset() {
+
+             this.setState({
+                 "show": false,
+                 "title": '',
+                 "variant": '',
+                 "message": '',
+             });
+         }
+
+     resetAfterTenSeconds() {
+        setTimeout(() => {
+            this.reset();
+        }, 10000);
+     }
+
     render() {
-        if(this.type === 'success') {
-            return (
-                <Alert key='success11' variant='success'>
-                    Request processed successfully
-                </Alert>
-            )
-        } else {
-            return (
-                        <Alert key='failure11' variant='danger'>
-                            There was an error processing your request. Please try after some time.
+        const {show, title, message, variant} = this.state;
+
+        return <Fragment>
+                {show === true && <div className="message-container ">
+                    <div className="container">
+                        <Alert variant={variant} onClose={() => this.reset()} dismissible>
+                            <Alert.Heading>{title}</Alert.Heading>
+                            <p>
+                                {message}
+                            </p>
                         </Alert>
-                    )
-        }
+                        </div>
+
+                    </div>
+
+                }
+                </Fragment>
 
     }
 }

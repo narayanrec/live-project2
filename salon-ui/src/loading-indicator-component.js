@@ -20,7 +20,7 @@ class LoadingIndicatorComponent extends React.Component {
         })
     }
 
-    componentDidUnmount() {
+    componentWillUnmount() {
         this.subscription.unsubscribe();
     }
 

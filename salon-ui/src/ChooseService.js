@@ -1,5 +1,6 @@
 import React, {Fragment} from "react";
 import {loadingIndicator} from './loading-indicator.js';
+import {appNotification} from './app-notification.js';
 
 class ChooseService extends React.Component {
 
@@ -13,6 +14,7 @@ class ChooseService extends React.Component {
 
     componentDidMount() {
         loadingIndicator.show();
+        console.log('making call');
         fetch("http://localhost:8080/api/services/retrieveAvailableSalonServices")
         .then(res => res.json())
         .then(
@@ -23,29 +25,37 @@ class ChooseService extends React.Component {
                 });
             },
             (error) => {
-
+                loadingIndicator.hide();
+                console.log('in error');
+                appNotification.showError("Unable to retrieve Spa Services  - " + error)
             }
         )
+        .catch(errorObject=>this.onError(errorObject))
     }
+
+    onError(error){
+            loadingIndicator.hide();
+            appNotification.showError("Unable to retrieve Spa Services  - " + error)
+        }
 
     render() {
         const {items} = this.state;
 
         return (
             <Fragment>
-            <div class="card-deck text-center">
+            <div className="card-deck text-center">
 
                 {items.map((item, i )=> (
-                            <div class="col-sm-4">
-                            <div key = {i} class="card ">
-                                <div class="card-header"><h4>{item.name}</h4></div>
-                                <div class="card-body">
-                                  <h5 class="card-title">${item.price}</h5>
-                                  <p class="card-text">
+                            <div className="col-sm-4">
+                            <div key = {i} className="card ">
+                                <div className="card-header"><h4>{item.name}</h4></div>
+                                <div className="card-body">
+                                  <h5 className="card-title">${item.price}</h5>
+                                  <p className="card-text">
                                     {item.description}< br/>
                                     {item.timeInMinutes} Minutes
                                   </p>
-                                  <button type="button" onClick= {(evt) => this.bookFor(item)}class="btn btn-primary">Book Now</button>
+                                  <button type="button" onClick= {(evt) => this.bookFor(item)} className="btn btn-primary">Book Now</button>
                                 </div>
                             </div>
                             </div>
