@@ -1,15 +1,16 @@
 import React, {Fragment} from "react";
 import {loadingIndicator} from './loading-indicator.js';
 import {appNotification} from './app-notification.js';
+import {useHistory} from "react-router-dom";
 
 class ChooseService extends React.Component {
-
 
     constructor(props) {
         super(props);
         this.state = {
             items: []
         }
+        this.history = useHistory();
     }
 
     componentDidMount() {
@@ -70,7 +71,8 @@ class ChooseService extends React.Component {
 
     }
     bookFor(item) {
-        console.log(item);
+        let path = `/chooseslot/${item.id}/${item.name}`;
+        this.history.push(path);
     }
 }
 
