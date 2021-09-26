@@ -11,7 +11,7 @@ function App() {
     <Router>
     <div className="App">
     <LoadingIndicatorComponent/>
-      <nav className="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <nav className="navbar navbar-expand-md navbar-dark bg-dark">
         <a className="navbar-brand" href="/">Ar Salon & Day Spa</a>
       </nav>
       <main role="main" className="container">

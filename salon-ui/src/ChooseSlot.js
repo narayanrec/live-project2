@@ -2,6 +2,7 @@ import React, {Fragment} from "react";
 import {loadingIndicator} from './loading-indicator.js';
 import {appNotification} from './app-notification.js';
 import {withRouter} from "react-router";
+import {getTomorrow, isDateLesserThanToday} from "./common/DateHelper";
 
 class ChooseSlot extends React.Component {
 
@@ -10,7 +11,7 @@ class ChooseSlot extends React.Component {
         this.state = {
             "serviceId": this.props.match.params.serviceId,
             "serviceName": this.props.match.params.serviceName,
-            lookupDate: '2021-09-24',
+            lookupDate: getTomorrow(),
             items: []
         }
     }
@@ -22,8 +23,11 @@ class ChooseSlot extends React.Component {
     }
 
     showSlotsOnDate(event) {
-        event.preventDefault();
         const {serviceId, lookupDate} = this.state;
+        if(isDateLesserThanToday(lookupDate)) {
+            appNotification.showError("Selected Date cannot be booked");
+            return;
+        }
         loadingIndicator.show();
         fetch("http://localhost:8080/api/services/retrieveAvailableSlots/" + serviceId + "/" + lookupDate)
                 .then(res => res.json())
@@ -70,9 +74,9 @@ class ChooseSlot extends React.Component {
                             <div key = {i} className="card ">
                                 <div className="card-header"><h4>{serviceName}</h4></div>
                                 <div className="card-body">
-                                  <h5 className="card-title">${item.stylistName}</h5>
+                                  <h5 className="card-title">{item.stylistName}</h5>
                                   <p className="card-text">
-                                    {item.slotFor}< br/>
+                                    Slot Time {item.time}< br/>
 
                                   </p>
                                   <button type="button" onClick= {(evt) => this.bookFor(item)} className="btn btn-primary">Book this Slot</button>
