@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {loadingIndicator} from './loading-indicator.js';
 import {appNotification} from './app-notification.js';
-import {useHistory} from "react-router-dom";
+import {withRouter} from "react-router";
 
 class ChooseService extends React.Component {
 
@@ -10,7 +10,6 @@ class ChooseService extends React.Component {
         this.state = {
             items: []
         }
-        this.history = useHistory();
     }
 
     componentDidMount() {
@@ -47,8 +46,8 @@ class ChooseService extends React.Component {
             <div className="card-deck text-center">
 
                 {items.map((item, i )=> (
-                            <div className="col-sm-4">
-                            <div key = {i} className="card ">
+                            <div key = {i} className="col-sm-4">
+                            <div className="card">
                                 <div className="card-header"><h4>{item.name}</h4></div>
                                 <div className="card-body">
                                   <h5 className="card-title">${item.price}</h5>
@@ -71,9 +70,8 @@ class ChooseService extends React.Component {
 
     }
     bookFor(item) {
-        let path = `/chooseslot/${item.id}/${item.name}`;
-        this.history.push(path);
+        this.props.history.push(`/chooseslot/${item.id}/${item.name}`);
     }
 }
 
-export default ChooseService;
+export default withRouter(ChooseService);

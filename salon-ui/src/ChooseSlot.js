@@ -1,29 +1,31 @@
 import React, {Fragment} from "react";
 import {loadingIndicator} from './loading-indicator.js';
 import {appNotification} from './app-notification.js';
-import {useParams} from "react-router-dom";
+import {withRouter} from "react-router";
 
-class ChooseService extends React.Component {
+class ChooseSlot extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            lookupDate: '',
+            "serviceId": this.props.match.params.serviceId,
+            "serviceName": this.props.match.params.serviceName,
+            lookupDate: '2021-09-24',
             items: []
         }
-        [this.serviceId, this.serviceName] = useParams();
     }
 
 
 
-    handleChange(event) {
-        this.setState({lookupDate: event.target.value});
+    setDate(dateVal) {
+        this.setState({lookupDate: dateVal});
     }
 
-    handleSubmit(event) {
+    showSlotsOnDate(event) {
         event.preventDefault();
+        const {serviceId, lookupDate} = this.state;
         loadingIndicator.show();
-        fetch("http://localhost:8080/api/services/retrieveAvailableSlots/" + this.serviceId + "/" + this.state.lookupDate)
+        fetch("http://localhost:8080/api/services/retrieveAvailableSlots/" + serviceId + "/" + lookupDate)
                 .then(res => res.json())
                 .then(
                     (result) => {
@@ -47,22 +49,26 @@ class ChooseService extends React.Component {
     }
 
     render() {
-        const {lookupDate, items} = this.state;
+        const {lookupDate, serviceName, items} = this.state;
         return (
         <div>
-            <form onSubmit={this.handleSubmit}>
-                <label>Choose a date for ${this.serviceName}: </label>
-                <input type="date" value={this.state.lookupDate} onChange={this.handleChange}/>
-                <input type="submit" value="Show Slots"/>
-            </form>
+            <div className="row">
+                <div className="col-4"><strong>Choose a Date for {serviceName}</strong></div>
+                <div className="col-5"> <input  className="form-control form-control-lg"
+                                                type="date"
+                                                value={lookupDate}
+                                                onChange={(evt)=>this.setDate(evt.target.value)} /> </div>
+                <div className="col-3"> <button type="submit" className="btn btn-primary mb-2" onClick={(evt) => this.showSlotsOnDate()} >Show Slots</button></div>
+            </div>
 
             <Fragment>
+            {items.length > 0 && <h4 className="pt-5">Available Slots on {lookupDate} <br/> </h4>}
             <div className="card-deck text-center">
 
                 {items.map((item, i )=> (
                             <div className="col-sm-4">
                             <div key = {i} className="card ">
-                                <div className="card-header"><h4>{this.serviceName}</h4></div>
+                                <div className="card-header"><h4>{serviceName}</h4></div>
                                 <div className="card-body">
                                   <h5 className="card-title">${item.stylistName}</h5>
                                   <p className="card-text">
@@ -89,4 +95,4 @@ class ChooseService extends React.Component {
     }
 }
 
-export default ChooseService;
+export default withRouter(ChooseSlot);
