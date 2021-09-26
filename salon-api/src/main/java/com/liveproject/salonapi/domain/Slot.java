@@ -36,6 +36,11 @@ public class Slot {
     LocalDateTime lockedAt;
     LocalDateTime confirmedAt;
 
+
+    public String getTime() {
+        return slotFor.toLocalTime().toString();
+    }
+
 }
 
 enum  SlotStatus {
